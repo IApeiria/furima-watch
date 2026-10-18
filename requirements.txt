@@ -1,0 +1,4 @@
+beautifulsoup4>=4.12
+curl_cffi>=0.7
+mercapi>=0.5
+winotify>=1.1

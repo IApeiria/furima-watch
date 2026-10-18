@@ -1,0 +1,39 @@
+# furima-watch 設定例。コピーして config.toml にすると、そちらが優先されます。
+# 正規表現は「NFKC 正規化＋小文字化したタイトル」に対して大文字小文字を無視してマッチします。
+# 全角英数字は半角になるので、パターンも半角で書いてください。
+# 正規表現は '...'（リテラル文字列）で書くと \ をエスケープせずに済みます。
+
+[settings]
+auction_ending_hours = 12   # ヤフオク: 即決なしでも、現在価格が条件内かつ残りこの時間以内なら通知
+ntfy_topic = ""             # スマホにも通知したい場合 ntfy.sh のトピック名（推測されにくい名前に）
+fail_alert_after = 6        # 同じサイトがこの回数連続で取得失敗したら一度だけ通知
+
+# 監視したい商品ごとに [[watch]] を書く（いくつでも可）
+[[watch]]
+name = "RTX 4070 Ti SUPER"
+queries = ["4070ti super", "4070 ti super", "4070tisuper"]   # フリマ・オークションの検索語
+shop_query = "4070 Ti SUPER"                                 # じゃんぱら・ソフマップ・ハードオフの検索語
+min_price = 30_000          # これ未満はケーブル・箱・詐欺の類とみなして無視
+max_price = 100_000         # これ以下で通知（円）
+include_junk = false        # ジャンク品も通知するか
+# タイトルがどれかに一致すれば対象（4070 Ti SUPRIM のような非 SUPER は除外）
+target = [
+    '4070\s*-?\s*ti\s*-?\s*(?:super|スーパー|s(?![a-z]))',
+    '4070\s*super\s*ti(?![a-z])',
+]
+# どれかに一致すれば除外（本体以外・PC 丸ごとなど）。空箱・買取広告などは常に除外される
+exclude = [
+    'ケーブル', '延長', 'ライザー', 'バックプレート', 'ステー', 'ブラケット', 'サポート',
+    '水冷ブロック', 'water\s*block', 'クーラーのみ', 'ファンのみ',
+    'ゲーミングpc', '自作pc', 'pc本体', 'パソコン', 'デスクトップ', 'ノート', 'bto', '見積', 'オーダーメイド',
+    'ryzen', 'core\s*i\d', '\bi[3579]-?\d', 'nextgear', 'galleria', 'g-tune', 'lenovo', 'legion', 'alienware', 'omen',
+]
+
+# 2 つ目の例: Nintendo Switch 2 を 4 万円以下で
+# [[watch]]
+# name = "Switch 2"
+# queries = ["switch2 本体", "スイッチ2 本体"]
+# max_price = 40_000
+# min_price = 20_000
+# target = ['switch\s*2', 'スイッチ\s*2']
+# exclude = ['ケース', 'フィルム', 'ソフトのみ', 'コントローラー']
